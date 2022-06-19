@@ -1,0 +1,235 @@
+
+Ducoment purpose:
+
+This is a vision document that outline the vision for a project code named "C with auto" 
+
+note: this is a propasal where input is wellcomed, the Project is in an early stage (pre-definition/exploraton),
+
+Motivation for project:
+
+Some have started talk about the need for some kind of "neo C" jai, zig, odin, rust, and go are just some of
+the atempts I have heard of the last fwe years all trying to be "a better" C. of curse I could spend my time
+complaing about all the things they are getting wrong and why they will never be able to raplace/supper-seed
+C in any meanigful way, but instead of that I will try to outline what I belive could actuly do just that.
+
+of curse I should acknowlage that it's not necesery the aim of any of the above stated languges to replace C.
+some merly aim to be a better alternativ in a spefic use/field. and they may very well sucsed at that, I dont know.
+
+So lets beging with "Why not C++?" well the answer is complex but mostly, if we were to asume the aim of C++ were to
+replace C, it comes down to the fact that C++ faild. C is still around that inhearetly implies that C++ got somthing
+wrong. I belive it was a failure to maintain suficent backwards compactibily with exsiting C code,
+there exist tons of C code out there that no one whats to rewrite.
+
+that leads us to tha qustion how do we add enough feature to C to justify any breakage?
+
+well of curse by not breaking existing code ( see rule #1 respecting the common subset of C and C++),
+but why then a new languge? why not an extension or libary?
+
+of curse what could be added by libary, or extension should. and the C standared commitie is surly working hard to
+add new feature to the C languge. and there exist plenty of excelent third party libarys to chose from, but still
+pepole feel the need to reinvent the wheel why is that?
+
+I belive it comes down to that anything new to C must follow one of the follwing constraint:
+
+1:
+	if it is to be added by libary it is inhearntly limented by what the C sytax allow you to define,
+	this mean no new basic types, and no new keywords.
+
+2:
+	new keywords must use one of the reseved key words either beging with dunder "__" or underscore capital
+	letter "_<Capital>".
+
+this is ofcurse partily solved by defining a new keyword and a typedef in a standared header, but this leads to a problem,
+how do I know that your bool, or atomic is standeared bool, or atomic?, well I don't, unleas I am willing to cearfully
+check your inludes, ofcurse this goes double for macros
+
+one of the thing C fails to deliver that no thired partie libary, or an extension to the languge can add is new keywords with
+consistent meanings acros all programs writen in C, unless we are willing to use raw keywords, _Bool, or _Atomic instead
+of bool, or atomic, this would of curse only work if all agred to this sacrfice. ofcurse compiler could be asked to warn on
+shadowing of the standared libary, and I would consideared that advisebale.
+( see rule #2 keyword shadowing, and rule #3 add keywords that C didn't)
+
+Definition of Projects ("C with auto"):
+
+Ok. A new languge for solwing a minor problem with C, that only theoretacly adds inconsitancy to our code, and could
+probably be solved with compilers warning on shadowing of the standared libary, seems a bit exseciv, dosen't it?
+so lets do the "C with Classes" thing, and ask; What more Could we add?
+
+since we just spoke of C++, doeas there exist somthing C++ has that is higly advised for evryone to use?, well sure auto,
+auto is adviced as better on many grounds ( See rule #4 add keyword/feature auto). but there is a problem auto
+allready has a meaning in the C standerad, if we add auto won't we break existing code? No, just beceas it is in the
+standeared doesn't mean any one acttuly use it. I am willing to bet that no shiping C code has used auto in a very long
+time, and if it has it's to broken to ship, with C++ having auto since C++11 any C code using auto would be very misleading
+to anyone that is naitive to morde C++. I fail to care if we break code that is brokean the first time it enconter a
+juiniour develepor anyway.
+
+RAII loved by many for providing well defined object life times, to me that just mean that the compiler isn't allowed to opimaize
+object life times. In "C with auto" objects are just data with a defined interface, I want the losest posibale life time constraints
+( see rule #6 inizilation shall ocur before first use). I don't intend to constrain object deltion, this is becaus as far as I
+am concernd object deltion is an optimization and should be done when most apropiet given any given enveiroments performace concern.
+this means that objects may be deleted before last use (or not at all), as long as correct exection is garented.
+
+a coomon complaint I see when "neo C"s are discused is string support, I have litle opoinon on the isue other then that it
+should be a first order type ( see rule #7 first order support for strings). but how it should be implemanted I leave as an
+excircies for the future.
+
+null pointers, lots of pepole seem consired I don't know why. but beaing abeal to trivaly check the validty of a pointer is
+importent, and my goto "assert( ptr != NULL);" is certinly not perfect. ( see rule #8 proxy values and undefined).
+
+/Zoe   2022 june 19 -
+
+Outline of standered document:
+
+"C with auto" shall be consider a working title for a new programing languge with the folwing constraints/features:
+
+1:
+
+	respect the common subset of C and C++
+
+
+2:
+
+	keyword shadowning,
+	
+	with the specfic aim to allow new keywords to be added to the languge without breaking existing code
+	
+	note: probaly adviseble to encurage compilers to warn on keyword shadowing.
+	
+	This is consider no worse then existing scim in C becuas of the follwing reasons:
+
+	1:
+		shadowing standered libary feature even when starndad libary headerds is not included should be considerd bad practice.
+		
+	2:
+		even if new keyword may generate warnings for existing code this will only break code that use -Werror which should be
+		considerd bad practice, project fails to spcify langguge version at compile time, and if compiler is upgraded; witch may
+		break builds reglades beacus the intoduction of new warnings unralated to addation of new languge keywords
+
+3:
+
+	add the keywords that C didn't add as languge keywords but as definitions in standeard headers:
+	
+	bool, atomic, and more
+	
+4:
+	add keyword/feautre auto (redefined keyword), auto shall be a replica for the C++11, and later, feture of the same name. it's is
+	impotrtant to maintain the principal of least suprise and auto should as far as posibale imply the same behhavior as in C++11 and later.
+	
+	auto is consideard an imortant feture for the folowing reason:
+
+	1:
+		minimize use of implicit conversion when applicable
+	
+	2:
+		minimize code friction     ( the diagreemeant betwen programers, or compilers what a ceirten construct mean.)
+		
+	3:
+		syntaxicly cheap way to add tamplates, no plans to add templates with pre C++11 syntax
+
+		note: this may break C calling convention, advice is wellocomed on how to maintain C calling convention while still
+		respacting the aim of this feature/constraint.    
+	
+	
+	note: this will break code that rely on the curent C meaning of auto but this is consideard a lesser harm.
+
+5:
+	named function arguments, it's considared an important feature and sholud work as if function call resolved to:
+
+	call(  .arg1 = ..., .arg2 = ..., ....) =>
+	
+	call( ( struct){ .arg1 = ..., .arg2 = ..., ....})
+	
+	Or when function arguments are not nemed at call:
+	
+	call(  arg1, arg2, ....) =>
+	
+	call( ( struct){ arg1, arg2, ....})
+	
+	function definitions/declarations shold have the coresponding change in meaning
+	
+	note: this may break C calling convention, advice is wellocomed on how to maintain C calling convention while still respacting
+	the aim of this feature/constraint.
+	
+6:
+
+	inliztion shall ocur before first use, if no other inliztion is provided the defualt inzilation will be used.
+	
+	default inliztion should be defined at type defination, 
+	
+	struct without defualt inliztion inherit defalut inlization from the default inizlition of memeber types.
+	
+	types included by the languge should have default inliztion. for intgears 0, and flaoting points positive zero.
+	
+	this implys suport for defualt iniziliation of function arguments.
+
+7:
+	
+	first order suport for string (new keyword).
+
+	defuelt inzilation of string should be an empty string of size zero.
+
+8:
+
+	proxy value and undefined.
+	
+	proxy objects has size zero, taking address of proxy objects is prohited.
+	
+	proxy objects share interface, and life time with there coresponding non-proxy objects.
+	
+	all objects has the follwing proxy members ( when not conflicting with with explicit members,
+	compilers should warn when declaration of proxy memebrs are eluded):
+	
+	proxy const size_t size; // return same value as sizeof( object)
+	
+	proxy bool undefined; // may return true if value of object is undefined, for expmle by azining value from an
+	      	   	      // rvalue with undefine return, for expmle signed overflow.
+
+	when object.undefined is false: expresion object.undefined.undefined
+	shall only return false if object can be known to have never been asigned undefined value.
+	
+	object.undefined shall return true if it is known that object may not exist.
+
+	exemple: ( *nullptr).undefined will return true.
+
+	objects may be comperad with undefined (new keyword):
+	
+	object == undefined
+	object != undefined   =>
+
+	object.unefined == true
+	object.unefined != true
+	
+9:
+	
+
+
+
+
+
+
+
+
+
+
+
+
+98:
+	
+	if an expresion can be constexpr it must be, according to the meaning as defined in regard of C++.
+	
+	constepr all the thing is a common call as a best practice, I do not see why it shold be on the programer to consider what can and can't
+	be evaluted at compile time this shold be resolved by the compiler.
+		
+	note: this is as regard to the feautre constexpr not the keyword, as this should not be a programer concern.
+
+99:
+
+	memoize (new keyword) instructs the compiler to memoize a function, this is to avoid the need for
+	explicit chasing, hashtables, or simlir scims. and instead encurage trust in the compiler.
+	
+	during execution of function defined as memoize:
+	
+	accsess, or modification of varibles not defined in function body, with no direct pointers passed as arguments,
+	shall be considerad undefinedbehavior.
+	
+	direct pointer shall include any pointer that points to the address of the object.
