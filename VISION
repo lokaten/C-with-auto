@@ -63,18 +63,13 @@ time, and if it has it's to broken to ship, with C++ having auto since C++11 any
 to anyone that is naitive to morde C++. I fail to care if we break code that is brokean the first time it enconter a
 juiniour develepor anyway.
 
-RAII loved by many for providing well defined object life times, to me that just mean that the compiler isn't allowed to opimaize
-object life times. In "C with auto" objects are just data with a defined interface, I want the losest posibale life time constraints
-( see rule #6 inizilation shall ocur before first use). I don't intend to constrain object deltion, this is becaus as far as I
-am concernd object deltion is an optimization and should be done when most apropiet given any given enveiroments performace concern.
-this means that objects may be deleted before last use (or not at all), as long as correct exection is garented.
+RAII loved by many for providing well defined object lifetimes, to me that just mean that the compiler isn't allowed to opimaize
+object lifetimes. In "C with auto" objects are just data with a defined interface, I want the losest posibale lifetime constraints
+( see rule #8 Objectliftimes).
 
 a coomon complaint I see when "neo C"s are discused is string support, I have litle opoinon on the isue other then that it
 should be a first order type ( see rule #7 first order support for strings). but how it should be implemanted I leave as an
 excircies for the future.
-
-null pointers, lots of pepole seem consired I don't know why. but beaing abeal to trivaly check the validty of a pointer is
-importent, and my goto "assert( ptr != NULL);" is certinly not perfect. ( see rule #8 proxy values and undefined).
 
 /Zoe   2022 june 19 -
 
@@ -86,6 +81,13 @@ Outline of standered document:
 
 	respect the common subset of C and C++
 
+	for the purposes of this document C++ syntax may be used to infer behavior aproxyment of C++ features,
+	this is in no way meant to imply the features, or keywords exist in "C with auto" and is instead a short hand for
+	refering to behavior in C++ without the need to type out all the nescery detials, this is a convince that is taken
+	becaus of the erly stage of the project.
+
+	all instance where features are defined with C++ feature used as anolgy, or refrence should be replaced with
+	explict defintions of those features, with an explist refrenc to the C++ standered where said feature is defined. 
 
 2:
 
@@ -170,24 +172,69 @@ Outline of standered document:
 
 8:
 
-	proxy value and undefined.
+	Object lifetimes
 	
-	proxy objects has size zero, taking address of proxy objects is prohited.
+	All objects has one of the follwing storage lifetime:
+
+	static:
+
+		exists for the entire time the program is executed.
+
+	thread_local:
+
+		(to be defined)
+		
+	proxy:
+
+		not backed by storage
+
+	deleted:
+
+		was allocated and is marked for deltion, or deleted either explcetly by calling free(), or implycetly at end of scope
+		
+		an object may not be deleted during the execution of a scope/block, where object has been derfrenced, if object.lifetime
+		has not returnd deleted
+
+		derefrencing deleted objects is undefinedbehavior
 	
-	proxy objects share interface, and life time with there coresponding non-proxy objects.
+	dynamic:
+
+		allocated as needed.
+
+	temporary:
+	
+		exist untill end of expresion. (c11 standared)
+		
+	void:
+
+		not accsebale, or dosen't exist
+	
+	prxy:
+	
+	proxy objects has size zero, and lifetime proxy. taking address of proxy objects is prohited.
+	
+	proxy objects share interface with objects of the coresponding type.
+	
+	derefrancing a proxy memeber of an object does not derefrence the object.
 	
 	all objects has the follwing proxy members ( when not conflicting with with explicit members,
-	compilers should warn when declaration of proxy memebrs are eluded):
+	compilers should warn when implict declaration of proxy memebrs are eluded):
+
+	proxy class enum lifetime; // return the lifetime of object
+	
+	proxy class enum type; // return type of object
 	
 	proxy const size_t size; // return same value as sizeof( object)
 	
 	proxy bool undefined; // may return true if value of object is undefined, for expmle by azining value from an
 	      	   	      // rvalue with undefine return, for expmle signed overflow.
-
+			      
+	all objects has using liftime and using type implyd;
+	
 	when object.undefined is false: expresion object.undefined.undefined
 	shall only return false if object can be known to have never been asigned undefined value.
 	
-	object.undefined shall return true if it is known that object may not exist.
+	object.undefined shall return true if object has storage lifetime deleted.
 
 	exemple: ( *nullptr).undefined will return true.
 
@@ -198,7 +245,7 @@ Outline of standered document:
 
 	object.unefined == true
 	object.unefined != true
-	
+		
 9:
 	
 
